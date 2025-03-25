@@ -1,0 +1,11 @@
+Package: dpkg-changelog
+Version:
+Section:
+Priority:
+Maintainer:
+Build-Depends: debhelper (>= 9), make
+Homepage:
+Architecture:
+Depends:
+Description:
+
