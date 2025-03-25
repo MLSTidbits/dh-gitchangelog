@@ -1,0 +1,65 @@
+#!/bin/env bash
+
+# Define the package name
+packageName="$(basename "$(pwd)")"
+
+# Define the output changelog file
+changelogFile="${1}"
+
+# Only run if on a 64-bit system
+test "$(uname -m)" = "x86_64" || { echo "This script is only for 64-bit systems" ; exit 1; }
+
+# Initialize the changelog file
+echo "" > "${changelogFile}.tmp"
+
+# Get the list of unique commit dates and time in reverse chronological order
+commitDate=$(git log --pretty=format:'%ad' --date=format:'%Y-%m-%d' | sort -u -r)
+
+# Iterate over each date
+for d in ${commitDate}; do
+
+    # Get the list of commitTime for the current date
+    commitTime=$(git log --since="$d 00:00" --until="$d 23:59" --pretty=format:'%h')
+
+    if test -z "${commitTime}" ; then
+        commitTime=$(git log --since="$d 00:00" --pretty=format:'%h')
+    fi
+
+    # Get the author name and email from the latest commit of the day
+    latestCommit=$(echo "${commitTime}" | head -n 1)
+
+    authorsName=$(git log -1 --format='%an' "${latestCommit}")
+    authorsEmail=$(git log -1 --format='%ae' "${latestCommit}")
+
+    # Convert git commit short id to version number
+    commitId=$(git log -1 --format='%h' "$latestCommit")
+
+    # Format the date for the changelog entry
+    changelogDate=$(date -d "$d" '+%a, %d %b %Y')
+
+    # Start the changelog entry
+    {
+        echo "${packageName} (${commitId}) stable; urgency=optional"
+        echo ""
+
+        # Add each commit message to the changelog entry
+        for c in ${commitTime}; do
+            commitMessage=$(git log -1 --pretty=format:'%s' "${c}")
+            echo "  * ${commitMessage}" >> "${changelogFile}.tmp"
+        done
+
+        # End the changelog entry
+        echo ""
+        echo " -- ${authorsName} <${authorsEmail}>  ${changelogDate} 00:00 $(date +'%z')"
+        echo ""
+    } >> "${changelogFile}.tmp"
+done
+
+# remove the last line of the changelog file
+head -n -1 "${changelogFile}.tmp" > "${changelogFile}.DEBIAN"
+
+gzip --best -nvf "${1}"
+
+test "${?}" -eq "0" && rm "${changelogFile}.tmp" || exit 1
+
+exit 0
