@@ -1,10 +1,10 @@
 <div align="center">
-  <h1 
+  <h1
     style="font-size: 3rem; font-weight: bold; color: rgb(150, 108, 190);"
     >
-    Tamplete
+    DPKG CHANGELOG
   </h1>
   <h3>
-    This is a template repo
+    A simple tool to generate a changelog from a Debian package
   </h3>
 </div>
