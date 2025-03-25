@@ -69,6 +69,9 @@ debian:
 
 	@dpkg-deb --root-owner-group --build $(BUILDDIR) build/$(PACKAGE)_$(VERSION)_$(AARCH).deb
 
+clean:
+	@rm -rvf build
+
 help:
 	@echo "Usage: make [target]"
 	@echo ""
