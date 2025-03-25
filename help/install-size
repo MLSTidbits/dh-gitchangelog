@@ -1,0 +1,16 @@
+#!/bin/env bash
+
+# This script is used to calculate the size of the installed package
+
+# Get the usr directory size
+sizeUSR=$(du -s "${BUILDDIR}/usr" | cut -f1)
+
+# Get the etc directory size
+sizeETC=$(du -s "${BUILDDIR}/etc" | cut -f1)
+
+sizeVAR=$(du -s "${BUILDDIR}/var" | cut -f1)
+
+totalSize=$((sizeUSR + sizeETC + sizeVAR))
+
+# Add the size of the control file
+sed -i "s/Installed-Size:/Installed-Size: ${totalSize}/" "${BUILDDIR}/DEBIAN/control"
