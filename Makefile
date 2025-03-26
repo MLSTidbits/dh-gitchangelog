@@ -3,80 +3,70 @@
 PACKAGE = dpkg-changelog
 VERSION = $(shell cat VERSION)
 
-# dpkg Section option
-SECTION = utils
-
-# Set priority of the package for deb package manager
-# optional, low, standard, important, required
-PRIORITY = optional
-
 MAINTAINER = $(shell git config user.name) <$(shell git config user.email)>
 
-DESCRIPTION = Change log generator from git commits log for debian packages
+INSTALL = dpkg-dev, git, dpkg-release
+BUILD = debhelper (>= 11), git, make (>= 4.1), dpkg-dev, dpkg-release
 
 HOMEPAGE = https:\/\/github.com\/MichaelSchaecher\/dpkg-changelog
 
-# Architecture (amd64, i386, armhf, arm64, ... all)
-AARCH = amd64
+ARCH = amd64
 
-DEPENDS = bash, coreutils, dpkg
+PACKAGE_DIR = package/$(PACKAGE)_$(VERSION)_$(ARCH)
 
-ROOTDIR = $(shell pwd)
-
-# Build path
-BUILDDIR = build/$(PACKAGE)_$(VERSION)_$(AARCH)
-
-export ROOTDIR BUILDDIR
+export PACKAGE_DIR
 
 # Phony targets
-.PHONY: debian clean help
+.PHONY: all debian clean help
 
 # Default target
 all: debian
 
 debian:
 
-	@mkdir -pv $(BUILDDIR)/DEBIAN \
-		$(BUILDDIR)/usr/bin \
-		$(BUILDDIR)/usr/share/doc/$(PACKAGE)
+	@echo "Building package $(PACKAGE) version $(VERSION)"
 
-	@cp -vf src/$(PACKAGE) $(ROOTDIR)/$(BUILDDIR)/usr/bin/
-	@cp -vf $(ROOTDIR)/doc/copyright $(ROOTDIR)/$(BUILDDIR)/usr/share/doc/$(PACKAGE)/
-	@cp -vf $(ROOTDIR)/debian/* $(ROOTDIR)/$(BUILDDIR)/DEBIAN/
+	@mkdir -p $(PACKAGE_DIR)
+	@cp -a app/* $(PACKAGE_DIR)
 
-	@chmod +x $(ROOTDIR)/$(BUILDDIR)/usr/bin/$(PACKAGE)
+	@cp -av VERSION $(PACKAGE_DIR)/usr/share/doc/$(PACKAGE)/version
 
-	@git-changelog $(ROOTDIR)/$(BUILDDIR)/usr/share/doc/$(PACKAGE)/changelog
+	@sed -i "s/Version:/Version: $(VERSION)/" $(PACKAGE_DIR)/DEBIAN/control
+	@sed -i "s/Maintainer:/Maintainer: $(MAINTAINER)/" $(PACKAGE_DIR)/DEBIAN/control
+	@sed -i "s/Homepage:/Homepage: $(HOMEPAGE)/" $(PACKAGE_DIR)/DEBIAN/control
+	@sed -i "s/Architecture:/Architecture: $(ARCH)/" $(PACKAGE_DIR)/DEBIAN/control
 
-	@sed -i "s/Version:/Version: $(VERSION)/" $(BUILDDIR)/DEBIAN/control
-	@sed -i "s/Section:/Section: $(SECTION)/" $(BUILDDIR)/DEBIAN/control
-	@sed -i "s/Priority:/Priority: $(PRIORITY)/" $(BUILDDIR)/DEBIAN/control
-	@sed -i "s/Architecture:/Architecture: $(AARCH)/" $(BUILDDIR)/DEBIAN/control
-	@sed -i "s/Depends:/Depends: $(DEPENDS)/" $(BUILDDIR)/DEBIAN/control
-	@sed -i "s/Maintainer:/Maintainer: $(MAINTAINER)/" $(BUILDDIR)/DEBIAN/control
-	@sed -i "s/Install-Size:/Install-Size: `du -s $(BUILDDIR) | cut -f1`/" $(BUILDDIR)/DEBIAN/control
-	@sed -i "s/Description:/Description: $(DESCRIPTION)/" $(BUILDDIR)/DEBIAN/control
-	@sed -i "s/Homepage:/Homepage: $(HOMEPAGE)/" $(BUILDDIR)/DEBIAN/control
+	@sed -i "s/Depends:/Depends: $(INSTALL)/" $(PACKAGE_DIR)/DEBIAN/control
+	@sed -i "s/Build-Depends:/Build-Depends: $(BUILD)/" $(PACKAGE_DIR)/DEBIAN/control
 
-	@help/install-size
+# For some reason the INSTALL variable is being added to BUILD variable at the beginning of the line
+# so we need to remove the that part of the line
+	@sed -i "s/Build-Depends: $(BUILD) $(INSTALL)/Build-Depends: $(BUILD)/" $(PACKAGE_DIR)/DEBIAN/control
 
-	@git-changelog $(BUILDDIR)/DEBIAN/changelog
-	@gzip -d $(BUILDDIR)/DEBIAN/changelog.gz
+	@cat ./DESCRIPTION >> $(PACKAGE_DIR)/DEBIAN/control
 
-# Create the MD5sums file omitting the DEBIAN directory
-	@find $(BUILDDIR)/usr -type f -exec md5sum {} \; > $(BUILDDIR)/DEBIAN/md5sums
-	@sed -i "s|$(BUILDDIR)/||" $(BUILDDIR)/DEBIAN/md5sums
+	@help/size
 
-	@dpkg-deb --root-owner-group --build $(BUILDDIR) build/$(PACKAGE)_$(VERSION)_$(AARCH).deb
+	@git-changelog $(PACKAGE_DIR)/DEBIAN/changelog
+	@git-changelog $(PACKAGE_DIR)/usr/share/doc/$(PACKAGE)/changelog
+	@gzip -d $(PACKAGE_DIR)/DEBIAN/changelog.gz
+
+	@dpkg-deb --root-owner-group --build $(PACKAGE_DIR) package/$(PACKAGE)_$(VERSION)_$(ARCH).deb
+
+install:
+
+	@dpkg -i package/$(PACKAGE)_$(VERSION)_$(ARCH).deb
 
 clean:
-	@rm -rvf build
+	@rm -Rvf ./package
 
 help:
-	@echo "Usage: make [target]"
+	@echo "Usage: make [target] <variables>"
 	@echo ""
 	@echo "Targets:"
-	@echo "  all       - Build and install the ddns application"
+	@echo "  all       - Build the debian package and install it"
 	@echo "  debian    - Build the debian package"
+	@echo "  install   - Install the debian package"
 	@echo "  clean     - Clean up build files"
 	@echo "  help      - Display this help message"
+	@echo ""
