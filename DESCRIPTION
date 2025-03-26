@@ -1,0 +1,3 @@
+Description: Debian style changelog generator from
+    a git repository. Making it easier to build your Debian apt packages.
+
