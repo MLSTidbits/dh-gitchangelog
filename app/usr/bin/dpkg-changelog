@@ -15,6 +15,23 @@ echo "" > "${changelogFile}.tmp"
 # Get the list of unique commit dates and time in reverse chronological order
 commitDate=$(git log --pretty=format:'%ad' --date=format:'%Y-%m-%d' | sort -u -r)
 
+versionInfo="$(cat <<EOF
+dpkg-changelog - VERSION: $(cat /usr/share/doc/dpkg-changelog/version) - LICENSE: MIT
+EOF
+)"
+
+case "${1}" in
+    help)
+        echo "Usage: dpkg-changelog <direct-path-to-changelog-file>"
+        exit 0
+        ;;
+    version)
+        echo "${versionInfo}"
+        exit 0
+        ;;
+    *) ;;
+esac
+
 # Iterate over each date
 for d in ${commitDate}; do
 
