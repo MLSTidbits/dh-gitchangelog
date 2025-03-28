@@ -5,8 +5,8 @@ VERSION = $(shell cat VERSION)
 
 MAINTAINER = $(shell git config user.name) <$(shell git config user.email)>
 
-INSTALL = dpkg-dev, git, dpkg-release
-BUILD = debhelper (>= 11), git, make (>= 4.1), dpkg-dev, dpkg-release
+INSTALL = dpkg-dev, git
+BUILD = debhelper (>= 11), git, make (>= 4.1), dpkg-dev
 
 HOMEPAGE = https:\/\/github.com\/MichaelSchaecher\/dpkg-changelog
 
