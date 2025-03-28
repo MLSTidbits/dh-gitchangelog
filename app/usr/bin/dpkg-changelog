@@ -75,7 +75,7 @@ done
 # remove the last line of the changelog file
 head -n -1 "${changelogFile}.tmp" > "${changelogFile}.DEBIAN"
 
-gzip --best -nvf "${1}"
+gzip --best -nvf "${1}.DEBIAN"
 
 test "${?}" -eq "0" && rm "${changelogFile}.tmp" || exit 1
 

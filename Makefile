@@ -49,7 +49,7 @@ debian:
 
 	@git-changelog $(PACKAGE_DIR)/DEBIAN/changelog
 	@git-changelog $(PACKAGE_DIR)/usr/share/doc/$(PACKAGE)/changelog
-	@gzip -d $(PACKAGE_DIR)/DEBIAN/changelog.gz
+	@gzip -d $(PACKAGE_DIR)/DEBIAN/changelog.DEBIAN.gz
 
 	@dpkg-deb --root-owner-group --build $(PACKAGE_DIR) package/$(PACKAGE)_$(VERSION)_$(ARCH).deb
 
