@@ -1,4 +1,4 @@
-Package: btrfs-snapshots-manager
+Package: dpkg-changelog
 Version:
 Section: utils
 Priority: optional
