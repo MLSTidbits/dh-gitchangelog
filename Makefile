@@ -12,7 +12,9 @@ HOMEPAGE = https://github.com/MichaelSchaecher/dpkg-changelog
 
 PACKAGE_DIR = package
 
-export PACKAGE_DIR PACKAGE VERSION MAINTAINER INSTALL BUILD HOMEPAGE
+ARCH = $(shell dpkg --print-architecture)
+
+export PACKAGE_DIR PACKAGE VERSION MAINTAINER INSTALL BUILD HOMEPAGE ARCH
 
 # Phony targets
 .PHONY: all debian clean help
