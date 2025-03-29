@@ -39,7 +39,7 @@ debian:
 
 install:
 
-	@dpkg -i package/$(PACKAGE)_$(VERSION)_$(ARCH).deb
+	@dpkg -i $(PACKAGE)_$(VERSION)_$(ARCH).deb
 
 clean:
 	@rm -Rvf ./package
