@@ -3,7 +3,7 @@
 # Define the package name
 packageName="$(basename "$(pwd)")"
 
-# Define the output changelog file
+# Define the output changelog fil
 changelogFile="${1}"
 
 # Only run if on a 64-bit system
@@ -42,6 +42,8 @@ for d in ${commitDate}; do
         commitTime=$(git log --since="$d 00:00" --pretty=format:'%h')
     fi
 
+    versionCode="$(date -d "${d}" '+%y.%m.%W')"
+
     # Get the author name and email from the latest commit of the day
     latestCommit=$(echo "${commitTime}" | head -n 1)
 
@@ -49,14 +51,14 @@ for d in ${commitDate}; do
     authorsEmail=$(git log -1 --format='%ae' "${latestCommit}")
 
     # Convert git commit short id to version number
-    commitId=$(git log -1 --format='%h' "$latestCommit")
+    commitId="$(git log -1 --format='%h' "${latestCommit}")"
 
     # Format the date for the changelog entry
     changelogDate=$(date -d "$d" '+%a, %d %b %Y')
 
     # Start the changelog entry
     {
-        echo "${packageName} (${commitId}) stable; urgency=optional"
+        echo "${packageName} (${versionCode}-${commitId}) stable; urgency=optional"
         echo ""
 
         # Add each commit message to the changelog entry
