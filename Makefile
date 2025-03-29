@@ -26,6 +26,8 @@ debian:
 
 	@echo "Building package $(PACKAGE) version $(VERSION)"
 
+	@echo "$(VERSION)" > $(PACKAGE_DIR)/usr/share/doc/$(PACKAGE)/version
+
 	@scripts/set-control
 
 	@dpkg-changelog $(PACKAGE_DIR)/DEBIAN/changelog

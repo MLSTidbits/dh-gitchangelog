@@ -8,3 +8,4 @@ build/
 *.tar
 package/DEBIAN/control
 package/DEBIAN/changelog
+version
