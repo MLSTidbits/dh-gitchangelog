@@ -29,6 +29,7 @@ debian:
 	@echo "$(VERSION)" > $(PACKAGE_DIR)/usr/share/doc/$(PACKAGE)/version
 
 	@scripts/set-control
+	@scripts/sum
 
 	@dpkg-changelog $(PACKAGE_DIR)/DEBIAN/changelog
 	@dpkg-changelog $(PACKAGE_DIR)/usr/share/doc/$(PACKAGE)/changelog
@@ -39,7 +40,10 @@ debian:
 
 install:
 
-	@dpkg -i $(PACKAGE)_$(VERSION)_$(ARCH).deb
+	@rm -vf $(PACKAGE_DIR)/DEBIAN/control \
+		$(PACKAGE_DIR)/DEBIAN/changelog \
+		$(PACKAGE_DIR)/DEBIAN/md5sums \
+		$(PACKAGE_DIR)/usr/share/doc/$(PACKAGE)/*.gz \
 
 clean:
 	@rm -Rvf ./package

@@ -25,5 +25,8 @@ Architecture: amd64
 Depends: ${INSTALL}
 Build-Depends: ${BUILD}
 Description: Git commit to Debian changelog -
-    using git commit data to create a Debian changelog entry.
+    Use the git commit log to generate a Debian changelog
+    file. This is useful for projects that use git as their
+    version control system and want to generate a Debian
+    package.
 EOF
