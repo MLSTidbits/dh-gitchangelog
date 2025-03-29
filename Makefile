@@ -1,20 +1,18 @@
 #!/bin/env make -f
 
 PACKAGE = dpkg-changelog
-VERSION = $(shell cat VERSION)
+VERSION = $(shell bash scripts/set-version)
 
 MAINTAINER = $(shell git config user.name) <$(shell git config user.email)>
 
 INSTALL = dpkg-dev, git
 BUILD = debhelper (>= 11), git, make (>= 4.1), dpkg-dev
 
-HOMEPAGE = https:\/\/github.com\/MichaelSchaecher\/dpkg-changelog
+HOMEPAGE = https://github.com/MichaelSchaecher/dpkg-changelog
 
-ARCH = amd64
+PACKAGE_DIR = package
 
-PACKAGE_DIR = package/$(PACKAGE)_$(VERSION)_$(ARCH)
-
-export PACKAGE_DIR
+export PACKAGE_DIR PACKAGE VERSION MAINTAINER INSTALL BUILD HOMEPAGE
 
 # Phony targets
 .PHONY: all debian clean help
@@ -26,32 +24,14 @@ debian:
 
 	@echo "Building package $(PACKAGE) version $(VERSION)"
 
-	@mkdir -p $(PACKAGE_DIR)
-	@cp -a app/* $(PACKAGE_DIR)
+	@scripts/set-control
 
-	@cp -av VERSION $(PACKAGE_DIR)/usr/share/doc/$(PACKAGE)/version
+	@dpkg-changelog $(PACKAGE_DIR)/DEBIAN/changelog
+	@dpkg-changelog $(PACKAGE_DIR)/usr/share/doc/$(PACKAGE)/changelog
+	@gzip -d $(PACKAGE_DIR)/DEBIAN/*.gz
+	@mv $(PACKAGE_DIR)/DEBIAN/changelog.DEBIAN $(PACKAGE_DIR)/DEBIAN/changelog
 
-	@sed -i "s/Version:/Version: $(VERSION)/" $(PACKAGE_DIR)/DEBIAN/control
-	@sed -i "s/Maintainer:/Maintainer: $(MAINTAINER)/" $(PACKAGE_DIR)/DEBIAN/control
-	@sed -i "s/Homepage:/Homepage: $(HOMEPAGE)/" $(PACKAGE_DIR)/DEBIAN/control
-	@sed -i "s/Architecture:/Architecture: $(ARCH)/" $(PACKAGE_DIR)/DEBIAN/control
-
-	@sed -i "s/Depends:/Depends: $(INSTALL)/" $(PACKAGE_DIR)/DEBIAN/control
-	@sed -i "s/Build-Depends:/Build-Depends: $(BUILD)/" $(PACKAGE_DIR)/DEBIAN/control
-
-# For some reason the INSTALL variable is being added to BUILD variable at the beginning of the line
-# so we need to remove the that part of the line
-	@sed -i "s/Build-Depends: $(BUILD) $(INSTALL)/Build-Depends: $(BUILD)/" $(PACKAGE_DIR)/DEBIAN/control
-
-	@cat ./DESCRIPTION >> $(PACKAGE_DIR)/DEBIAN/control
-
-	@help/size
-
-	@git-changelog $(PACKAGE_DIR)/DEBIAN/changelog
-	@git-changelog $(PACKAGE_DIR)/usr/share/doc/$(PACKAGE)/changelog
-	@gzip -d $(PACKAGE_DIR)/DEBIAN/changelog.gz
-
-	@dpkg-deb --root-owner-group --build $(PACKAGE_DIR) package/$(PACKAGE)_$(VERSION)_$(ARCH).deb
+	@scripts/mkdeb
 
 install:
 
