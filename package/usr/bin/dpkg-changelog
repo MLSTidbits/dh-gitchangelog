@@ -1,10 +1,79 @@
 #!/bin/env bash
 
+# Copyright (C) 2025 by Michael Schaecher <mschaecher78@gmail.com> under the MIT License
+
+# This script generates a changelog file for a Debian package from git commit messages.
+# It is designed to be run in a git repository and will create a changelog file
+#
+# - Get the list of unique commit dates and time in reverse chronological order
+# - Check if the git branch is for development/testing or main branch
+# - Only run if on a 64-bit system
+# - Initialize the changelog file
+# - Iterate over each date
+# - Get the list of commitTime for the current date
+# - Get the author name and email from the latest commit of the day
+# - Convert git commit short id to version number
+# - Format the date for the changelog entry
+# - Start the changelog entry
+# - Add each commit message to the changelog entry
+# - End the changelog entry
+# - Remove the last line of the changelog file
+# - Compress the changelog file using gzip
+# - Remove the temporary changelog file
+
+set -e
+
+appName="dpkg-changelog"
+appVersion="$(cat /usr/share/doc/dpkg-changelog/version)"
+
 # Define the package name
 packageName="$(basename "$(pwd)")"
 
 # Define the output changelog fil
 changelogFile="${1}"
+
+# Get the list of unique commit dates and time in reverse chronological order
+commitDate=$(git log --pretty=format:'%ad' --date=format:'%Y-%m-%d' | sort -u -r)
+
+# Check if the git branch is for development/testing or main branch
+branchName="$(git rev-parse --abbrev-ref HEAD)"
+
+sableArray=( "main" "master" "stable" )
+
+versionInfo="$(cat <<EOF
+${appName} - [ VERSION: ${appVersion} ] - copyright (c) 2025 under the MIT License
+EOF
+)"
+
+helpInfo="$(cat <<EOF
+Generate a changelog file for a Debian package from git commit messages
+
+Usage: ${appName} <direct-path>/changelog-file
+
+Options:
+    help                    Show this help message
+    version                 Show the version information
+
+Example:
+    Packaging for Debian/Ubuntu the changelog file is usually named "changelog" and is
+    generally located in "/usr/share/doc/${packageName}/changelog". The ending results
+    in a file named "changelog.DEBIAN.gz" in said directory.
+
+    NOTE: If generating a changelog for the DEBIAN directory (optional)
+          it must be named "changelog" and decompressed with gzip.
+          \`gzip -d changelog.DEBIAN.gz\`
+
+${versionInfo}
+
+EOF
+)"
+
+case "${1}" in
+    help                    ) echo "${helpInfo}"; exit 0 ;;
+    version                 ) echo "${versionInfo}" ; exit 0                                        ;;
+    *                       )
+    ;;
+esac
 
 # Only run if on a 64-bit system
 test "$(uname -m)" = "x86_64" || { echo "This script is only for 64-bit systems" ; exit 1; }
@@ -12,35 +81,19 @@ test "$(uname -m)" = "x86_64" || { echo "This script is only for 64-bit systems"
 # Initialize the changelog file
 echo "" > "${changelogFile}.tmp"
 
-# Get the list of unique commit dates and time in reverse chronological order
-commitDate=$(git log --pretty=format:'%ad' --date=format:'%Y-%m-%d' | sort -u -r)
-
-versionInfo="$(cat <<EOF
-dpkg-changelog - VERSION: $(cat /usr/share/doc/dpkg-changelog/version) - LICENSE: MIT
-EOF
-)"
-
-case "${1}" in
-    help)
-        echo "Usage: dpkg-changelog <direct-path-to-changelog-file>"
-        exit 0
-        ;;
-    version)
-        echo "${versionInfo}"
-        exit 0
-        ;;
-    *) ;;
-esac
-
 # Iterate over each date
 for d in ${commitDate}; do
 
     # Get the list of commitTime for the current date
     commitTime=$(git log --since="$d 00:00" --until="$d 23:59" --pretty=format:'%h')
 
-    if test -z "${commitTime}" ; then
-        commitTime=$(git log --since="$d 00:00" --pretty=format:'%h')
-    fi
+    # Sometimes git commits do not return a time for the commit.
+    ! test -n "${commitTime}" || commitTime=$(git log --since="$d 00:00" --pretty=format:'%h')
+
+    # Check if the branch is for development/testing or main branch.
+    for i in ${branchName}; do
+        [[ "${sableArray[*]}" =~ ${i} ]] && releaseType="stable" || releaseType="unstable"
+    done
 
     versionCode="$(date -d "${d}" '+%y.%m.%W')"
 
@@ -58,7 +111,7 @@ for d in ${commitDate}; do
 
     # Start the changelog entry
     {
-        echo "${packageName} (${versionCode}-${commitId}) stable; urgency=optional"
+        echo "${packageName} (${versionCode}-${commitId}) ${releaseType}; urgency=optional"
         echo ""
 
         # Add each commit message to the changelog entry
