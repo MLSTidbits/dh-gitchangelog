@@ -23,10 +23,8 @@ Installed-Size: ${totalSize}
 Homepage: ${HOMEPAGE}
 Architecture: amd64
 Depends: ${INSTALL}
+Conflicts: ${CONFLICTS}
 Build-Depends: ${BUILD}
-Description: Git commit to Debian changelog -
-    Use the git commit log to generate a Debian changelog
-    file. This is useful for projects that use git as their
-    version control system and want to generate a Debian
-    package.
+Description: ${DESCRIPTION}
+  ${LONG_DESCRIPTION}
 EOF
