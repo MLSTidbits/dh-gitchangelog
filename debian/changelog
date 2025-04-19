@@ -1,5 +1,19 @@
 
-dpkg-changelog (1.6.137) stable; urgency=optional
+dpkg-changelog (1.8.147) unstable; urgency=optional
+
+  * Made git branch handling better by checking what branch is being build.
+  * Fix output path for control file in set-control script
+  * Add version file with initial version number 1.6.137
+  * Update .gitignore to clarify version entry and remove debian directory
+  * Add initial configuration and man page files for dpkg-changelog
+  * Changed License to GNU General Public License v3 to copyright file
+  * Add debian/control file for package metadata and dependencies
+  * Remove obsolete DEBIAN rule file to streamline package management
+  * Modified app to handle versioning better, and moved location.
+
+ -- Michael Schaecher <MichaelLeeSchaecher@gmail.com>  Sat, 19 Apr 2025 00:00:00 +0000
+
+dpkg-changelog (1.6.137) unstable; urgency=optional
 
   * Update copyright file path in COPYING to reflect new package structure and switched License to GNU-3.0
   * Add debian/ directory to .gitignore for now.
@@ -7,25 +21,25 @@ dpkg-changelog (1.6.137) stable; urgency=optional
 
  -- Michael Schaecher <MichaelLeeSchaecher@gmail.com>  Fri, 18 Apr 2025 00:00:00 +0000
 
-dpkg-changelog (1.6.129) stable; urgency=optional
+dpkg-changelog (1.6.129) unstable; urgency=optional
 
   * * Refactor Makefile and scripts for improved package management: * Update PACKAGE and HOMEPAGE variables to be dynamic. * Add DESCRIPTION and LONG_DESCRIPTION variables for better documentation. * Introduce gen-chsums script for generating md5sums. * Enhance mkdeb script to check for existing deb files and handle force option. * Modify set-control script to use new description variables. * Remove obsolete sum script.
 
  -- Michael Schaecher <MichaelLeeSchaecher@gmail.com>  Sun, 13 Apr 2025 00:00:00 +0000
 
-dpkg-changelog (1.6.116) stable; urgency=optional
+dpkg-changelog (1.6.116) unstable; urgency=optional
 
   * Enhance dpkg-changelog script to generate changelog from git commits, adding support for help and version options, and improving branch type detection.
 
  -- Michael Schaecher <MichaelLeeSchaecher@gmail.com>  Tue, 01 Apr 2025 00:00:00 +0000
 
-dpkg-changelog (0.4.112) stable; urgency=optional
+dpkg-changelog (0.4.112) unstable; urgency=optional
 
   * Update Makefile and scripts for improved package management and add md5sums generation
 
  -- Michael Schaecher <MichaelLeeSchaecher@gmail.com>  Sat, 29 Mar 2025 00:00:00 +0000
 
-dpkg-changelog (0.4.110) stable; urgency=optional
+dpkg-changelog (0.4.110) unstable; urgency=optional
 
   * Fix install command in Makefile to reference package path correctly
   * Add version file generation to Makefile and update .gitignore
@@ -41,7 +55,7 @@ dpkg-changelog (0.4.110) stable; urgency=optional
 
  -- Michael Schaecher <MichaelLeeSchaecher@gmail.com>  Fri, 28 Mar 2025 00:00:00 +0000
 
-dpkg-changelog (0.2.97) stable; urgency=optional
+dpkg-changelog (0.2.97) unstable; urgency=optional
 
   * Bump version to 25.03.12-0456
   * Add version and help commands to dpkg-changelog script
@@ -50,7 +64,7 @@ dpkg-changelog (0.2.97) stable; urgency=optional
 
  -- Michael Schaecher <MichaelLeeSchaecher@gmail.com>  Wed, 26 Mar 2025 00:00:00 +0000
 
-dpkg-changelog (0.1.91) stable; urgency=optional
+dpkg-changelog (0.1.91) unstable; urgency=optional
 
   * Add clean target to Makefile for removing build artifacts
   * Add Installed-Size field to control file and script to calculate package size
@@ -62,7 +76,7 @@ dpkg-changelog (0.1.91) stable; urgency=optional
 
  -- Michael Schaecher <MichaelLeeSchaecher@gmail.com>  Mon, 24 Mar 2025 00:00:00 +0000
 
-dpkg-changelog (0.0.83) stable; urgency=optional
+dpkg-changelog (0.0.83) unstable; urgency=optional
 
   * Initial commit
 
