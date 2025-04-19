@@ -1,0 +1,16 @@
+Package: dpkg-changelog
+Version:
+Section: utils
+Priority: optional
+Maintainer:
+Installed-Size:
+Homepage:
+Architecture: amd64
+Depends: dpkg (>= 1.0.0), dpkg-craft (>= 0.5.0), dpkg-dev (>= 1.0.0)
+Recommends: dpkg-repos (>= 0.1.0)
+Conflicts:
+Build-Depends: dpkg-dev (>= 1.0.0), debhelper (>= 9), dpkg-craft (>= 0.5.0)
+Description: Generate changelog file for Debian packages.
+  Generate and configure changelog entries for Debian packages, sorting them
+  by date and setting the appropriate version numbers. If more then one commit
+  for the same date is found, then each commit will be added for that date.
