@@ -48,7 +48,8 @@ commit_dates=$(git log --date=short --pretty=format:'%ad' | sort -ur | uniq)
 
 fistCommitDate=$(git log --date=short --pretty=format:'%ad' | tail -n 1)
 
-branches=( "main" "master" "stable" "unstable" "testing" "dev" "release" "production" )
+stableBranches=( "main" "master" "stable" "release" "production" )
+unstableBranches=( "dev" "development" "unstable" "testing" )
 
 # Check if the system is 64-bit
 test "$(uname -m)" = "x86_64" || {
@@ -79,22 +80,20 @@ for d in $commit_dates; do
     # Count the number of commits and reverse the order
     commitCount=$(git rev-list --count HEAD --since="$fistCommitDate" --until="$d 23:59")
 
-    # For every 20 commits the major version number is increased by 1
-    setMajor=$(( commitCount / 25 ))
+    setMajor=$(( commitCount / 25 ))                # For every 25 commits, increment the major version.
+    setMinor=$(( ( commitCount / 5 ) + setMajor ))  # For every 5 commits, increment the minor version.
 
-    # For every 10 commits the minor version number is increased by 1
-    setMinor=$(( ( commitCount / 5 ) + setMajor ))
-
+    # For every 1 commit, increment the patch version.
     setPatch=$(( (commitCount + $(date -d "$d" '+%-j')) % 1000 ))
 
-
     versionCode="${setMajor}.${setMinor}.${setPatch}"
+
     # Check if the branch is for development/testing or main branch.
-    for branch in "${branches[@]}"; do case $branch in
-        stable*|*main*|*master*|*release*|*production*  ) releaseType="stable"   ;;
-        *dev*|*unstable*|*testing*                      ) releaseType="unstable" ;;
-        *                                               ) releaseType="unstable" ;;
-    esac; done
+    case $(git rev-parse --abbrev-ref HEAD) in
+        "${stableBranches[@]}"          ) releaseType="stable"   ;;
+        "${unstableBranches[@]}"        ) releaseType="unstable" ;;
+        *                               ) releaseType="unknown"  ;;
+    esac
 
   # Format the date for the changelog entry
   changelogDate=$(date -d "$d" '+%a, %d %b %Y')
