@@ -44,7 +44,7 @@ packageName="$(basename "$(pwd)")"
 changelogFile="debian/changelog"
 
 # Get the list of unique commit dates in reverse chronological order
-commit_dates=$(git log --date=short --pretty=format:'%ad')
+commit_dates=$(git log --date=short --pretty=format:'%ad' | sort -ur | uniq)
 
 fistCommitDate=$(git log --date=short --pretty=format:'%ad' | tail -n 1)
 
@@ -85,7 +85,7 @@ for d in $commit_dates; do
     # For every 10 commits the minor version number is increased by 1
     setMinor=$(( ( commitCount / 5 ) + setMajor ))
 
-    setPatch=$(( (commitCount / 2 ) + (setMinor * setMajor) ))
+    setPatch=$(( (commitCount + $(date -d "$d" '+%-j')) % 1000 ))
 
 
     versionCode="${setMajor}.${setMinor}.${setPatch}"
@@ -125,6 +125,6 @@ currentVersion=$(grep -oP '(?<=\()\d+\.\d+\.\d+(?=\))' "$changelogFile" | head -
 
 echo "Setting main version to ${currentVersion} in the version file"
 
-echo "${currentVersion}" > version
+echo "${currentVersion}" | tee doc/version
 
 exit 0
