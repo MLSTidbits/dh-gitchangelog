@@ -13,7 +13,7 @@ if test -d "${PACKAGE_DIR}/var" ; then sizeVAR=$(du -s "${PACKAGE_DIR}/var" | cu
 
 totalSize=$((sizeUSR + sizeETC + sizeVAR))
 
-cat <<EOF > ${PACKAGE_DIR}/DEBIAN/control
+cat <<EOF > ../debian/control
 Package: ${PACKAGE}
 Version: ${VERSION}
 Section: utils
