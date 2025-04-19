@@ -1,0 +1,13 @@
+Package: dpkg-changelog
+Version:
+Section: utils
+Priority: optional
+Maintainer: Michael Schaecher <MichaelLeeSchaecher@gmail.com>
+Installed-Size: 20
+Homepage: https://github.com/MichaelSchaecher/ddns
+Architecture: amd64
+Depends: dpkg-craft, git, dpkg-dev
+Conflicts:
+Build-Depends: debhelper (>= 11), git, make (>= 4.1), dpkg-dev
+Description: Debian changelog from git commit messages -
+  Generate a Debian style changelog from git commit messages used in Debian/Ubuntu packages.

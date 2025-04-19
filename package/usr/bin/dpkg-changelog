@@ -44,7 +44,7 @@ packageName="$(basename "$(pwd)")"
 changelogFile="debian/changelog"
 
 # Get the list of unique commit dates in reverse chronological order
-commit_dates=$(git log --date=short --pretty=format:'%ad')
+commit_dates=$(git log --date=short --pretty=format:'%ad' | sort -ur)
 
 fistCommitDate=$(git log --date=short --pretty=format:'%ad' | tail -n 1)
 
@@ -80,13 +80,12 @@ for d in $commit_dates; do
     commitCount=$(git rev-list --count HEAD --since="$fistCommitDate" --until="$d 23:59")
 
     # For every 20 commits the major version number is increased by 1
-    setMajor=$(( commitCount / 25 ))
+    setMajor=$(( commitCount / 20 ))
 
     # For every 10 commits the minor version number is increased by 1
-    setMinor=$(( ( commitCount / 5 ) + setMajor ))
+    setMinor=$(( commitCount + setMajor ))
 
-    setPatch=$(( (commitCount / 2 ) + (setMinor * setMajor) ))
-
+    setPatch=$(( $(date -d "$d" '+%-j') ))
 
     versionCode="${setMajor}.${setMinor}.${setPatch}"
     # Check if the branch is for development/testing or main branch.
@@ -128,3 +127,6 @@ echo "Setting main version to ${currentVersion} in the version file"
 echo "${currentVersion}" > version
 
 exit 0
+
+# Remove any duplicated entries
+sed -i '/^$/d' "$changelogFile"
