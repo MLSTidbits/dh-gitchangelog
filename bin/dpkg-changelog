@@ -21,7 +21,12 @@
 # - Compress the changelog file using gzip
 # - Remove the temporary changelog file
 
+function print_info () { echo "${appName}: ${1}" ; sleep 1 ; }
+
 set -eo pipefail
+
+# shellcheck disable=SC1091
+test -f /etc/default/dpkg-changelog && source /etc/default/dpkg-changelog
 
 appName="dpkg-changelog"
 appVersion="$(cat /usr/share/doc/dpkg-changelog/version)"
@@ -37,11 +42,12 @@ GNU-3.0-or-later License for more details.
 EOF
 )"
 
-# Define the package name
-packageName="$(basename "$(pwd)")"
+packageName=${PACKAGE_NAME:-"$(basename "$(pwd)")"}         # Define the package name
+changelogFile=${CHANGELOG_FILE:-"debian/changelog"}         # Define the changelog file
 
-# Define the output changelog file
-changelogFile="debian/changelog"
+majorCount=${MAJOR_COUNT:-"42"}
+minorCount=${MINOR_COUNT:-"8"}
+patchCount=${PATCH_COUNT:-"1000"}
 
 # Get the list of unique commit dates in reverse chronological order
 commit_dates=$(git log --date=short --pretty=format:'%ad' | sort -ur | uniq)
@@ -52,17 +58,16 @@ stableBranches=( "main" "master" "stable" "release" "production" )
 unstableBranches=( "dev" "development" "unstable" "testing" )
 
 # Check if the system is 64-bit
-test "$(uname -m)" = "x86_64" || {
-    echo "This script is designed to run on a 64-bit system."
-    exit 1
+test "$(uname -m)" = "x86_64" || test "$(uname -m)" = "aarch64" || {
+    print_info "none 64-bit system detected --- exiting" ; exit 1
 }
 
 case "${1}" in
-    -h|-v|--help|--version  ) echo "$appInfo" ; exit 0 ;;
-    *                       )
-        echo "${appName}: generate a changelog file for - ${packageName} -" ; echo "" > "$changelogFile"
-    ;;
+    -h|-v|--help|--version  ) echo "$appInfo" ; exit 0                                      ;;
+    *                       ) print_info "generate a changelog file for - ${packageName} -" ;;
 esac
+
+echo "" | tee "$changelogFile" > /dev/null                  # Initialize the changelog file
 
 # Iterate over each date
 for d in $commit_dates; do
@@ -80,11 +85,11 @@ for d in $commit_dates; do
     # Count the number of commits and reverse the order
     commitCount=$(git rev-list --count HEAD --since="$fistCommitDate" --until="$d 23:59")
 
-    setMajor=$(( commitCount / 25 ))                # For every 25 commits, increment the major version.
-    setMinor=$(( ( commitCount / 5 ) + setMajor ))  # For every 5 commits, increment the minor version.
+    setMajor=$(( commitCount / majorCount ))
+    setMinor=$(( ( commitCount / minorCount ) + setMajor ))
 
     # For every 1 commit, increment the patch version.
-    setPatch=$(( (commitCount + $(date -d "$d" '+%-j')) % 1000 ))
+    setPatch=$(( commitCount + ( $(date -d "$d" '+%-j') % patchCount ) ))
 
     versionCode="${setMajor}.${setMinor}.${setPatch}"
 
@@ -115,15 +120,21 @@ for d in $commit_dates; do
         echo " -- ${authorName} <${authorEmail}>  ${changelogDate} 00:00:00 +0000"
         echo ""
 
-    } >> "$changelogFile"
+    } | tee -a "$changelogFile" > /dev/null
 
     # Amend the version number to the version file int the root directory
 done
 
 currentVersion=$(grep -oP '(?<=\()\d+\.\d+\.\d+(?=\))' "$changelogFile" | head -n 1)
 
-echo "Setting main version to ${currentVersion} in the version file"
+echo "${currentVersion}" | tee doc/version > /dev/null
 
-echo "${currentVersion}" | tee doc/version
+# Compress the changelog file using gzip
+gzip --best --keep --quiet --force "$changelogFile" || {
+    print_info "failed to compress the changelog file" ; exit 1
+}
+
+# Move to doc folder
+mv "$changelogFile.gz" doc/changelog.DEBIAN.gz
 
 exit 0
