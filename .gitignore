@@ -2,11 +2,10 @@
 
 build/
 
-*.gz
 *.xz
 *.deb
 *.tar
 package/DEBIAN/control
-package/DEBIAN/changelog
-# version
+debian/changelog
+*.DEBIAN.gz
 md5sums
