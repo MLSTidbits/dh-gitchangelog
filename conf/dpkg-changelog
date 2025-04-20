@@ -1,0 +1,17 @@
+# Set the package name for the changelog [default: $(basename "$(pwd)")]
+#PACKAGE_NAME="dpkg-changelog"
+
+# The location of the changelog file [default: debian/changelog]
+#CHANGELOG_FILE="debian/changelog"
+
+# Set how the major version is determined based on the number of Git commits
+# that is devided by the number below. The
+#MAJOR_COUNT="50"
+
+# Set how the minor version is determined based on the number of Git commits
+# that is devided by the number below. The
+#MINOR_COUNT="10"
+
+# Set how the patch version is determined based on the number of Git commits
+# that is devided by the number below. The
+#PATCH_COUNT="1000"
