@@ -9,4 +9,3 @@ package/DEBIAN/control
 debian/changelog
 doc/version
 *.DEBIAN.gz
-md5sums
