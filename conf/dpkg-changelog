@@ -6,12 +6,16 @@
 
 # Set how the major version is determined based on the number of Git commits
 # that is devided by the number below. The
-#MAJOR_COUNT="50"
+#MAJOR_COUNT="12"
 
 # Set how the minor version is determined based on the number of Git commits
 # that is devided by the number below. The
-#MINOR_COUNT="10"
+#MINOR_COUNT="6"
 
 # Set how the patch version is determined based on the number of Git commits
 # that is devided by the number below. The
-#PATCH_COUNT="1000"
+#PATCH_COUNT="(( MAJOR_COUNT + MINOR_COUNT ))"
+
+# Use the number of days of the year that the that that changelog message was
+# created for added patch versioning [default: true]
+#DATE_PATCH_COUNT="true"
