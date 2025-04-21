@@ -1,0 +1,19 @@
+#!/bin/env bash
+
+set -eo pipefail
+
+# TODO: This needs to be ran in a loop to get the size of all child directories, not
+# just the top level directories or the ones being checked here.
+
+# Get the usr directory size
+if test -d "${BUILD_DIR}/usr" ; then sizeUSR=$(du -s "${BUILD_DIR}/usr" | cut -f1) ; fi
+
+# Get the etc directory size
+if test -d "${BUILD_DIR}/etc" ; then sizeETC=$(du -s "${BUILD_DIR}/etc" | cut -f1) ; fi
+
+# Get the var directory size
+if test -d "${BUILD_DIR}/var" ; then sizeVAR=$(du -s "${BUILD_DIR}/var" | cut -f1) ; fi
+
+sizeTotal=$(( sizeUSR + sizeETC + sizeVAR ))
+
+sed -i "s/Installed-Size:.*/Installed-Size: ${sizeTotal}/" "${BUILD_DIR}/DEBIAN/control"
