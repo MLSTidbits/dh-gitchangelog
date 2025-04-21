@@ -45,9 +45,11 @@ EOF
 packageName=${PACKAGE_NAME:-"$(basename "$(pwd)")"}         # Define the package name
 changelogFile=${CHANGELOG_FILE:-"debian/changelog"}         # Define the changelog file
 
-majorCount=${MAJOR_COUNT:-"42"}
-minorCount=${MINOR_COUNT:-"8"}
-patchCount=${PATCH_COUNT:-"1000"}
+majorCount=${MAJOR_COUNT:-"12"}
+minorCount=${MINOR_COUNT:-"6"}
+patchCount=${PATCH_COUNT:-"(( majorCount + minorCount ))"}
+
+datePatchCount=${DATE_PATCH_COUNT:-"true"}
 
 # Get the list of unique commit dates in reverse chronological order
 commit_dates=$(git log --date=short --pretty=format:'%ad' | sort -ur | uniq)
@@ -69,6 +71,12 @@ esac
 
 echo "" | tee "$changelogFile" > /dev/null                  # Initialize the changelog file
 
+case "${datePatchCount}" in
+    true                    ) patchCount=$(( $(date -d "$d" '+%-j') / patchCount  ))        ;;
+    false                   ) patchCount=1                                                  ;;
+    *                       ) print_info "invalid date patch count option" ; exit 1         ;;
+esac
+
 # Iterate over each date
 for d in $commit_dates; do
 
@@ -89,7 +97,7 @@ for d in $commit_dates; do
     setMinor=$(( ( commitCount / minorCount ) + setMajor ))
 
     # For every 1 commit, increment the patch version.
-    setPatch=$(( commitCount + ( $(date -d "$d" '+%-j') % patchCount ) ))
+    setPatch=$(( commitCount + patchCount ))
 
     versionCode="${setMajor}.${setMinor}.${setPatch}"
 
