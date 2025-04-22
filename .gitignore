@@ -5,7 +5,6 @@ build/
 *.xz
 *.deb
 *.tar
-package/DEBIAN/control
 debian/changelog
 doc/version
 *.DEBIAN.gz
