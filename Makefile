@@ -42,9 +42,6 @@ debian:
 	@sed -i 's/Version:/Version: $(VERSION)/' \
 		$(BUILD_DIR)/DEBIAN/control
 
-	# @sed -i 's/Maintainer:/Maintainer: $(MAINTAINER)/' \
-	# 	$(BUILD_DIR)/DEBIAN/control
-
 	@sed -i 's/Maintainer:/Maintainer: $(MAINTAINER)/' \
 		$(BUILD_DIR)/DEBIAN/control
 
