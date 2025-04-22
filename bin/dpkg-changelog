@@ -45,8 +45,8 @@ EOF
 packageName=${PACKAGE_NAME:-"$(basename "$(pwd)")"}         # Define the package name
 changelogFile=${CHANGELOG_FILE:-"debian/changelog"}         # Define the changelog file
 
-majorCount=${MAJOR_COUNT:-"12"}
-minorCount=${MINOR_COUNT:-"6"}
+majorCount=${MAJOR_COUNT:-"36"}
+minorCount=${MINOR_COUNT:-"18"}
 patchCount=${PATCH_COUNT:-"(( majorCount + minorCount ))"}
 
 datePatchCount=${DATE_PATCH_COUNT:-"true"}
