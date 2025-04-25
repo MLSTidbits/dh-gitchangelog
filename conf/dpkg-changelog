@@ -19,3 +19,8 @@
 # Use the number of days of the year that the that that changelog message was
 # created for added patch versioning [default: true]
 #DATE_PATCH_COUNT="true"
+
+# Only use the logs from the Git branch specified below. This is useful to keep
+# the changelog clean when working on multiple branches. Default is the current
+# working branch.
+#GIT_BRANCH="main"

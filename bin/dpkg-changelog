@@ -45,9 +45,11 @@ EOF
 packageName=${PACKAGE_NAME:-"$(basename "$(pwd)")"}         # Define the package name
 changelogFile=${CHANGELOG_FILE:-"debian/changelog"}         # Define the changelog file
 
-majorCount=${MAJOR_COUNT:-"36"}
-minorCount=${MINOR_COUNT:-"18"}
+majorCount=${MAJOR_COUNT:-"24"}
+minorCount=${MINOR_COUNT:-"12"}
 patchCount=${PATCH_COUNT:-"(( majorCount + minorCount ))"}
+
+gitBranch=${GIT_BRANCH:-"$(git rev-parse --abbrev-ref HEAD)"} # Get the current git branch
 
 datePatchCount=${DATE_PATCH_COUNT:-"true"}
 
@@ -81,7 +83,7 @@ esac
 for d in $commit_dates; do
 
     # Get the list of commits for the current date
-    commits=$(git log --since="$d 00:00" --until="$d 23:59" --pretty=format:'%h')
+    commits=$(git log "${gitBranch}" --since="$d 00:00" --until="$d 23:59" --pretty=format:'%h')
 
     test -n "${commits}" || commits=$(git log --since="$d 00:00" --pretty=format:'%h')
 
