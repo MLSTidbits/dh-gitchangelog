@@ -42,19 +42,19 @@ GNU-3.0-or-later License for more details.
 EOF
 )"
 
-packageName=${PACKAGE_NAME:-"$(basename "$(pwd)")"}         # Define the package name
-changelogFile=${CHANGELOG_FILE:-"debian/changelog"}         # Define the changelog file
+packageName=${PACKAGE_NAME:-"$(basename "$(pwd)")"}             # Define the package name
+changelogFile=${CHANGELOG_FILE:-"debian/changelog"}             # Define the changelog file
 
 majorCount=${MAJOR_COUNT:-"24"}
 minorCount=${MINOR_COUNT:-"12"}
 patchCount=${PATCH_COUNT:-"(( majorCount + minorCount ))"}
 
-gitBranch=${GIT_BRANCH:-"$(git rev-parse --abbrev-ref HEAD)"} # Get the current git branch
+gitBranch=${GIT_BRANCH:-"$(git rev-parse --abbrev-ref HEAD)"}   # Get the current git branch
 
 datePatchCount=${DATE_PATCH_COUNT:-"true"}
 
 # Get the list of unique commit dates in reverse chronological order
-commit_dates=$(git log --date=short --pretty=format:'%ad' | sort -ur | uniq)
+commit_dates=$(git log --date=short --pretty=format:'%ad' | sort -ur)
 
 fistCommitDate=$(git log --date=short --pretty=format:'%ad' | tail -n 1)
 
