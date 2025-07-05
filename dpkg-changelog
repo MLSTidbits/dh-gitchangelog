@@ -1,0 +1,136 @@
+#!/bin/env bash
+
+# Copyright (C) 2025 by Michael Schaecher <mschaecher78@gmail.com> under the GNU-3.0-or-later License
+
+# This script generates a changelog file for a Debian package from git commit messages.
+# It is designed to be run in a git repository and will create a changelog file
+#
+# - Get the list of unique commit dates and time in reverse chronological order
+# - Check if the git branch is for development/testing or main branch
+# - Only run if on a 64-bit system
+# - Initialize the changelog file
+# - Iterate over each date
+# - Get the list of commitTime for the current date
+# - Get the author name and email from the latest commit of the day
+# - Convert git commit short id to version number
+# - Format the date for the changelog entry
+# - Start the changelog entry
+# - Add each commit message to the changelog entry
+# - End the changelog entry
+# - Remove the last line of the changelog file
+# - Compress the changelog file using gzip
+# - Remove the temporary changelog file
+
+function print_info () { echo "${appName}: ${1}" ; sleep 1 ; }
+
+set -eo pipefail
+
+# shellcheck disable=SC1091
+test -f /etc/default/dpkg-changelog && source /etc/default/dpkg-changelog
+
+appName="dpkg-changelog"
+appVersion="$(cat /usr/share/doc/dpkg-changelog/version)"
+
+appInfo="$(cat <<EOF
+${appName} (version: ${appVersion}) - Debian package changelog generator
+Copyright (C) 2025 by Michael Schaecher <michaelleeschaecher@gmail.com>
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU-3.0-or-later License for more details.
+EOF
+)"
+
+packageName=${PACKAGE_NAME:-"$(basename "$(pwd)")"}             # Define the package name
+changelogFile=${CHANGELOG_FILE:-"debian/changelog"}             # Define the changelog file
+
+IterateVersion=${ITERATE_VERSION:-"15"}
+
+gitBranch=${GIT_BRANCH:-"$(git rev-parse --abbrev-ref HEAD)"}   # Get the current git branch
+
+# Get the list of unique commit dates in reverse chronological order
+commit_dates=$(git log --date=short --pretty=format:'%ad' | sort -ur)
+
+fistCommitDate=$(git log --date=short --pretty=format:'%ad' | tail -n 1)
+
+stableBranches=( "main" "master" "stable" "release" "production" )
+unstableBranches=( "dev" "development" "unstable" "testing" )
+
+# Check if the system is 64-bit
+test "$(uname -m)" = "x86_64" || test "$(uname -m)" = "aarch64" || {
+    print_info "none 64-bit system detected --- exiting" ; exit 1
+}
+
+if test -f "$changelogFile" ; then rm -v "$changelogFile" ; fi
+
+case "${1}" in
+    -h|-v|--help|--version  ) echo "$appInfo" ; exit 0                                      ;;
+    *                       ) print_info "generate a changelog file for - ${packageName} -" ;;
+esac
+
+# Iterate over each date
+for d in $commit_dates; do
+
+    # Get the list of commits for the current date
+    commits=$(git log "${gitBranch}" --since="$d 00:00" --until="$d 23:59" --pretty=format:'%h')
+
+    test -n "${commits}" || commits=$(git log --since="$d 00:00" --pretty=format:'%h')
+
+    # Get the author name and email from the latest commit of the day
+    latestCommit=$(echo "$commits" | head -n 1)
+    authorName=$(git log -1 --format='%an' "$latestCommit")
+    authorEmail=$(git log -1 --format='%ae' "$latestCommit")
+
+    # Count the number of commits and reverse the order
+    mapfile -t commitCount < <(git rev-list HEAD --since="$fistCommitDate" --until="$d 23:59")
+
+    # Initialize version numbers
+    setMajor=0 ; setMinor=0 ; setPatch=0
+
+    # Iterate over each commit
+    for ((i=0; i<${#commitCount[@]}; i++)); do
+        setPatch=$(( setPatch + 1 ))
+        (( setPatch == IterateVersion )) && { setPatch=0 ; setMinor=$(( setMinor + 1 )) ; }
+        (( setMinor == IterateVersion )) && { setMinor=0 ; setMajor=$(( setMajor + 1 )) ; }
+    done
+
+    versionCode="${setMajor}.${setMinor}.${setPatch}"
+
+    # Check if the branch is for development/testing or main branch.
+    case $(git rev-parse --abbrev-ref HEAD) in
+        "${stableBranches[@]}"          ) releaseType="stable"   ;;
+        "${unstableBranches[@]}"        ) releaseType="unstable" ;;
+        *                               ) releaseType="stable"   ;;
+    esac
+
+  # Format the date for the changelog entry
+  changelogDate=$(date -d "$d" '+%a, %d %b %Y')
+
+  # Start the changelog entry
+    {
+
+        echo "${packageName} (${versionCode}) ${releaseType}; urgency=low"
+        echo ""
+
+        # Add each commit message to the changelog entry
+        for commit in $commits; do
+            commit_message=$(git log -1 --pretty=format:'%s' "$commit")
+            echo "  * $commit_message"
+        done
+
+        # End the changelog entry
+        echo ""
+        echo " -- ${authorName} <${authorEmail}>  ${changelogDate} 00:00:00 +0000"
+        echo ""
+
+    } | tee -a "$changelogFile" > /dev/null
+
+    # Amend the version number to the version file int the root directory
+done
+
+currentVersion=$(grep -oP '(?<=\()\d+\.\d+\.\d+(?=\))' "$changelogFile" | head -n 1)
+
+echo "${currentVersion}" | tee docs/version > /dev/null
+
+exit 0

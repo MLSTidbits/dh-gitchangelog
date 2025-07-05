@@ -1,10 +1,11 @@
 ---
 title: DPKG-CHANGLELOG-CONF
 section: 8
-header: dpkg changelog configuration
-footer: DPKG-CHANGLELOG-CONF
+header: Administration Commands
+footer: dpkg-changelog.conf(8)
 date: 2025-04-20
-author: Michael L. Schaecher
+authors:
+    - Michael Schaecher
 ---
 
 # NAME
