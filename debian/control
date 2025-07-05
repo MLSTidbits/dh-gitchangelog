@@ -1,4 +1,4 @@
-Source: dpkg-changelog
+Source: genchangelog
 Section: utils
 Priority: optional
 Maintainer: Michael Schaecher <michaelleeschaecher@gmail.com>
@@ -6,18 +6,19 @@ Rules-Requires-Root: no
 Build-Depends:
  debhelper, dh-make, git
 Standards-Version: 4.6.2
-Homepage: https://github/MichaelSchaecher/dpkg-changelog
-Vcs-Browser: https://github.com/MichaelSchaecher/dpkg-changelog
-Vcs-Git: https://github.com/MichaelSchaecher/dpkg-changelog.git
+Homepage: https://github/MichaelSchaecher/genchangelog
+Vcs-Browser: https://github.com/MichaelSchaecher/genchangelog
+Vcs-Git: https://github.com/MichaelSchaecher/genchangelog.git
 
-Package: dpkg-changelog
+Package: genchangelog
 Architecture: any
 Multi-Arch: foreign
+Replaces: dpkg-changelog
 Depends:
  git, cureutils, ${misc:Depends}, dh-make, debhelper
 Recommends: devscripts
 Description: Generate Debian changelogs from git commit messages
- dpkg-changelog is a tool to generate Debian changelogs from git commit messages.
+ genchangelog is a tool to generate Debian changelogs from git commit messages.
  It can be used to create a debian/changelog file that follows the Debian Policy
  Manual and the Debian Developer's Reference.
  .

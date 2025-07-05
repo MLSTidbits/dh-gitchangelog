@@ -1,8 +1,8 @@
 ---
-title: DPKG-CHANGLELOG-CONF
+title: DH_GENCHANGELOG(8)
 section: 8
 header: Administration Commands
-footer: dpkg-changelog.conf(8)
+footer: dh_genchangelog(8)
 date: 2025-04-20
 authors:
     - Michael Schaecher

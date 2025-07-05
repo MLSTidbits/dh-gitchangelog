@@ -15,7 +15,7 @@ debian/files
 debian/*.ex
 docs/version
 
-debian/dpkg-changelog/
+debian/genchangelog/
 
-doc/man/dpkg-changelog.1
-doc/man/dpkg-changelog.conf.5
+doc/man/genchangelog.1
+doc/man/genchangelog.conf.5

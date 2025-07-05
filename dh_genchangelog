@@ -131,6 +131,6 @@ done
 
 currentVersion=$(grep -oP '(?<=\()\d+\.\d+\.\d+(?=\))' "$changelogFile" | head -n 1)
 
-echo "${currentVersion}" | tee docs/version > /dev/null
+echo "${currentVersion}" | tee doc/version > /dev/null
 
 exit 0

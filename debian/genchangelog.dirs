@@ -1,4 +1,4 @@
 etc/default
 usr/bin
-usr/share/doc/dpkg-changelog
+usr/share/doc/genchangelog
 usr/share/man/man8

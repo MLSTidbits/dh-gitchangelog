@@ -23,12 +23,11 @@
 # what is being installed
 
 # Package variables
-app_name = dpkg-changelog
+app_name = genchangelog
 
 # Source files
-app = $(CURDIR)/$(app_name)
-app_conf = $(CURDIR)/$(app_name).conf
-grub_d_conf = $(CURDIR)/41_$(app_name)
+app = $(CURDIR)/dh_genchangelog
+app_conf = $(CURDIR)/dh_genchangelog.conf
 
 # Installation directories
 pkg_dir = $(CURDIR)/debian/$(app_name)
