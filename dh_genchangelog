@@ -21,8 +21,6 @@
 # - Compress the changelog file using gzip
 # - Remove the temporary changelog file
 
-function print_info () { echo "${appName}: ${1}" ; sleep 1 ; }
-
 set -eo pipefail
 
 # shellcheck disable=SC1091
@@ -62,11 +60,11 @@ test "$(uname -m)" = "x86_64" || test "$(uname -m)" = "aarch64" || {
     print_info "none 64-bit system detected --- exiting" ; exit 1
 }
 
-if test -f "$changelogFile" ; then rm -v "$changelogFile" ; fi
+if test -f "$changelogFile" ; then rm -f "$changelogFile" ; fi
 
 case "${1}" in
-    -h|-v|--help|--version  ) echo "$appInfo" ; exit 0                                      ;;
-    *                       ) print_info "generate a changelog file for - ${packageName} -" ;;
+    -h|-v|--help|--version  ) echo "$appInfo" ; exit 0 ;;
+    *                       ) echo "dh_genchangelog"   ;;
 esac
 
 # Iterate over each date
