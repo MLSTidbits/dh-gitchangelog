@@ -15,8 +15,6 @@ function build_deb () {
 
     local _signing
 
-    echo "Building the DEB package..."
-
     shift || true
 
     while true ; do case "$1" in
@@ -32,7 +30,11 @@ function build_deb () {
     if [ -n "$_gpg_id" ] && [ "$_sign" = "false" ] ; then
         echo "GPG signing ID is required for signing the package!" ; exit 1
     elif [ -n "$_gpg_id" ] && [ "$_sign" = "true" ] ; then
-        echo "Signing the package with GPG ID: $_gpg_id"
+        if ! gpg --list-keys | grep "$_gpg_id" | awk '{print $1}' | tr -d '[:space:]' &> /dev/null ; then
+            echo "Invalid GPG ID: $_gpg_id"
+            echo "Please provide a valid GPG key ID."
+            exit 1
+        fi
         _signing="--sign-keyid=$_gpg_id"
     elif [ -z "$_gpg_id" ] && [ "$_sign" = "false" ] ; then
         _signing="--no-sign"
@@ -40,9 +42,8 @@ function build_deb () {
 
     if [ "$_sign" = "false" ] ; then _no_sign="--no-sign" ; else _no_sign="" ; fi
 
-    echo ""
-    sleep 0.5
-    dpkg-buildpackage -b "$_signing" --root-command=fakeroot
+    sleep 0.5 ; dh_genchangelog
+    sleep 0.5 ; dpkg-buildpackage -b "$_signing" --root-command=fakeroot
 
 }
 
