@@ -1,16 +1,26 @@
-Package: dpkg-changelog
-Version:
+Source: dpkg-changelog
 Section: utils
 Priority: optional
-Maintainer:
-Installed-Size:
-Homepage:
-Architecture: amd64
-Depends: dpkg (>= 1.0.0), git (>= 1.0.0)
-Recommends: dpkg-repos (>= 0.1.0), dpkg-craft (>= 0.5.0)
-Conflicts:
-Build-Depends: dpkg-dev (>= 1.0.0), debhelper (>= 9), dpkg-craft (>= 0.5.0)
-Description: Generate changelog file for Debian packages.
-  Generate and configure changelog entries for Debian packages, sorting them
-  by date and setting the appropriate version numbers. If more then one commit
-  for the same date is found, then each commit will be added for that date.
+Maintainer: Michael Schaecher <michaelleeschaecher@gmail.com>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper, dh-make, git
+Standards-Version: 4.6.2
+Homepage: https://github/MichaelSchaecher/dpkg-changelog
+Vcs-Browser: https://github.com/MichaelSchaecher/dpkg-changelog
+Vcs-Git: https://github.com/MichaelSchaecher/dpkg-changelog.git
+
+Package: dpkg-changelog
+Architecture: any
+Multi-Arch: foreign
+Depends:
+ git, cureutils, ${misc:Depends}, dh-make, debhelper
+Recommends: devscripts
+Description: Generate Debian changelogs from git commit messages
+ dpkg-changelog is a tool to generate Debian changelogs from git commit messages.
+ It can be used to create a debian/changelog file that follows the Debian Policy
+ Manual and the Debian Developer's Reference.
+ .
+ It is designed to be used in conjunction with git and debhelper, and can be
+ integrated into your workflow to automate the process of generating changelogs.
+ .

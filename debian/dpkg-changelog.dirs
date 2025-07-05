@@ -1,0 +1,4 @@
+etc/default
+usr/bin
+usr/share/doc/dpkg-changelog
+usr/share/man/man8
