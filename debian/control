@@ -15,7 +15,7 @@ Architecture: any
 Multi-Arch: foreign
 Replaces: dpkg-changelog
 Depends:
- git, cureutils, ${misc:Depends}, dh-make, debhelper
+ git, coreutils, ${misc:Depends}, dh-make, debhelper
 Recommends: devscripts
 Description: Generate Debian changelogs from git commit messages
  genchangelog is a tool to generate Debian changelogs from git commit messages.
