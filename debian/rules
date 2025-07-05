@@ -37,7 +37,8 @@ app_bin = $(pkg_dir)/usr/bin
 %:
 	dh $@
 
-build: build-stamp
+build:
+	dh_genchangelog
 
 build-stamp:
 	dh_auto_build
@@ -59,7 +60,6 @@ install: build clean
 binary-indep: install
 	dh_installdocs
 	dh_bash-completion
-	dh_genchangelog
 	dh_installchangelogs
 	dh_installsystemd --restart-after-upgrade
 	dh_installman
