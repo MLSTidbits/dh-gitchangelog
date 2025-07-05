@@ -13,9 +13,8 @@ debian/.debhelper/
 debian/files
 
 debian/*.ex
-docs/version
+doc/version
 
 debian/genchangelog/
 
 doc/man/genchangelog.1
-doc/man/genchangelog.conf.5
