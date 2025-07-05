@@ -37,8 +37,7 @@ app_bin = $(pkg_dir)/usr/bin
 %:
 	dh $@
 
-build:
-	dh_genchangelog
+build: build-stamp
 
 build-stamp:
 	dh_auto_build
