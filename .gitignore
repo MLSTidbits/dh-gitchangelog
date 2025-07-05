@@ -1,10 +1,21 @@
 .vscode/
 
 build/
+dist/
 
-*.xz
+changelog
+
+*.gz
 *.deb
-*.tar
-debian/changelog
-doc/version
-*.DEBIAN.gz
+
+# Ignore the from a dpkg-buildpackage run
+debian/.debhelper/
+debian/files
+
+debian/*.ex
+docs/version
+
+debian/dpkg-changelog/
+
+doc/man/dpkg-changelog.1
+doc/man/dpkg-changelog.conf.5
