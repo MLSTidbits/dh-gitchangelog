@@ -110,7 +110,7 @@ function manual_install () {
 function Initialize_build () {
 
     # Manually required system packages
-    _required=( debhelper dh-make git dpkg-changelog pandoc )
+    _required=( debhelper dh-make git dpkg-changelog pandoc coreutils )
 
     _missing=()
 
