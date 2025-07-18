@@ -8,13 +8,15 @@ changelog
 *.gz
 *.deb
 
-# Ignore the from a dpkg-buildpackage run
+# Ignore the following from the `debian` directory since
+# they are generated during the build process and should
+# not be committed to the repository.
 debian/.debhelper/
 debian/files
-
 debian/*.ex
+debian/*.debhelper
+debian/*.substvars
+debian/dh-genchangelognsd/
+
 doc/version
-
-debian/genchangelog/
-
-doc/man/genchangelog.1
+man/dh_genchangelog.8
