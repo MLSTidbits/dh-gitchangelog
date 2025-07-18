@@ -1,4 +1,5 @@
-debian/copyright
+doc/copyright
 doc/version
 README.md
 CODE_OF_CONDUCT.md
+CONTRIBUTING.md
