@@ -1,8 +1,8 @@
 ---
-title: DH_GENCHANGELOG(8)
-section: 8
-header: Administration Commands
-footer: dh_genchangelog(8)
+title: DH_GITCHANGELOG.CONF
+section: 5
+header: Configuration File
+footer: dh_gitchangelog.conf(5)
 date: 2025-04-20
 authors:
     - Michael Schaecher
