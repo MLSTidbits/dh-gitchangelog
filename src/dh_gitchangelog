@@ -1,0 +1,117 @@
+#!/bin/env bash
+
+# Copyright (C) 2025 by Michael Schaecher <mschaecher78@gmail.com>
+
+# This script generates a Debian changelog file from git commit messages and is met to
+# be used in conjunction with git, dh-make, and debhelper.
+
+set -eo pipefail
+
+# shellcheck disable=SC1091
+test -f /etc/default/dh-gitchangelog && source /etc/default/dh-gitchangelog
+
+_appName="dh-gitchangelog"
+_appVersion="$(cat /usr/share/doc/dh-gitchangelog 2>/dev/null ||
+echo "unknown")"
+
+_appInfo="$(cat <<EOF
+${_appName} (version: ${_appVersion}) - Debian package changelog generator
+Copyright (C) 2025 by Michael Schaecher <michaelleeschaecher@gmail.com>
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU-3.0-or-later License for more details.
+EOF
+)"
+
+_packageName=${PACKAGE_NAME:-"$(basename "$(pwd)")"}
+_changelogFile=${CHANGELOG_FILE:-"debian/changelog"}
+
+_IterateVersion=${ITERATE_VERSION:-"15"}
+
+_gitBranch=${GIT_BRANCH:-"$(git rev-parse --abbrev-ref HEAD)"}
+_urgency=${URGENCY:-"low"}
+
+# Get the list of unique commit dates in reverse chronological order
+_commitDates=$(git log --date=short --pretty=format:'%ad' | sort -ur)
+
+_fistCommitDate=$(git log --date=short --pretty=format:'%ad' | tail -n 1)
+
+# Check if the system is 64-bit
+test "$(uname -m)" = "x86_64" || test "$(uname -m)" = "aarch64" || {
+    print_info "none 64-bit system detected --- exiting" ; exit 1
+}
+
+if test -f "$_changelogFile" ; then rm -f "$_changelogFile" ; fi
+
+[ "$1" = "version" ] && { echo "$_appInfo" ; exit 0 ; }
+
+# Iterate over each date # 2089492222
+for d in $_commitDates; do
+
+    # Get the list of commits for the current date
+    _commits=$(git log "${_gitBranch}" --since="$d 00:00" --until="$d 23:59" --pretty=format:'%h')
+
+    test -n "$_commits" || _commits=$(git log --since="$d 00:00" --pretty=format:'%h')
+
+    # Get the author name and email from the latest commit of the day
+    _latestCommit=$(echo "$_commits" | head -n 1)
+    _authorName=$(git log -1 --format='%an' "$_latestCommit")
+    _authorEmail=$(git log -1 --format='%ae' "$_latestCommit")
+
+    # Count the number of commits and reverse the order
+    mapfile -t commitCount < <(git rev-list HEAD --since="$_fistCommitDate" --until="$d 23:59")
+
+    # Initialize version numbers
+    _setMajor=0 ; _setMinor=0 ; _setPatch=0
+
+    # Iterate over each commit
+    for ((i=0; i<${#commitCount[@]}; i++)); do
+        _setPatch=$(( _setPatch + 1 ))
+        (( _setPatch == _IterateVersion )) && { _setPatch=0 ; _setMinor=$(( _setMinor + 1 )) ; }
+        (( _setMinor == _IterateVersion )) && { _setMinor=0 ; _setMajor=$(( _setMajor + 1 )) ; }
+    done
+
+    versionCode="${_setMajor}.${_setMinor}.${_setPatch}"
+
+    # Check if the branch is for development/testing or main branch.
+    case $(git rev-parse --abbrev-ref HEAD) in
+        main|master|stable|release|production )
+            _releaseType="stable"   ;;
+        dev|development|unstable|testing      )
+            _releaseType="unstable" ;;
+        * )
+        _releaseType="stable"   ;;
+    esac
+
+    # Format the date for the changelog entry
+    _changelogDate=$(date -d "$d" '+%a, %d %b %Y')
+
+    # Start the changelog entry
+    {
+
+        echo "${_packageName} (${versionCode}) ${_releaseType}; urgency=$_urgency"
+        echo ""
+
+        # Add each commit message to the changelog entry
+        for commit in $_commits; do
+            _commitMessage=$(git log -1 --pretty=format:'%s' "$commit")
+            echo "  * $_commitMessage"
+        done
+
+        # End the changelog entry
+        echo ""
+        echo " -- ${_authorName} <${_authorEmail}>  ${_changelogDate} 00:00:00 +0000"
+        echo ""
+
+    } | tee -a "$_changelogFile" > /dev/null
+
+    # Amend the version number to the version file int the root directory
+done
+
+_currentVersion=$(grep -oP '(?<=\()\d+\.\d+\.\d+(?=\))' "$_changelogFile" | head -n 1)
+
+echo "${_currentVersion}" | tee doc/version > /dev/null
+
+exit 0
