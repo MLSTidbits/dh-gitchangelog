@@ -1,16 +1,16 @@
-Source: genchangelog
-Section: utils
+Source: gh-gitchangelog
+Section: devel
 Priority: optional
 Maintainer: Michael Schaecher <michaelleeschaecher@gmail.com>
 Rules-Requires-Root: no
 Build-Depends:
  debhelper, dh-make, git
 Standards-Version: 4.6.2
-Homepage: https://github/MichaelSchaecher/genchangelog
-Vcs-Browser: https://github.com/MichaelSchaecher/genchangelog
-Vcs-Git: https://github.com/MichaelSchaecher/genchangelog.git
+Homepage: https://github/MichaelSchaecher/gh-gitchangelog
+Vcs-Browser: https://github.com/MichaelSchaecher/gh-gitchangelog
+Vcs-Git: https://github.com/MichaelSchaecher/gh-gitchangelog.git
 
-Package: genchangelog
+Package: gh-gitchangelog
 Architecture: any
 Multi-Arch: foreign
 Replaces: dpkg-changelog
@@ -18,10 +18,11 @@ Depends:
  git, coreutils, ${misc:Depends}, dh-make, debhelper
 Recommends: devscripts
 Description: Generate Debian changelogs from git commit messages
- genchangelog is a tool to generate Debian changelogs from git commit messages.
- It can be used to create a debian/changelog file that follows the Debian Policy
- Manual and the Debian Developer's Reference.
+ gh-gitchangelog is a tool to generate Debian changelogs from git
+ commit messages. It can be used to create a debian/changelog file
+ that follows the Debian Policy Manual and the Debian Developer's
+ Reference.
  .
- It is designed to be used in conjunction with git and debhelper, and can be
- integrated into your workflow to automate the process of generating changelogs.
- .
+ It is designed to be used in conjunction with git, dh-make and
+ debhelper, and can be integrated into your workflow to automate
+ the process of generating changelogs.
