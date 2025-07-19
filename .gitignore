@@ -16,7 +16,7 @@ debian/files
 debian/*.ex
 debian/*.debhelper
 debian/*.substvars
-debian/dh-genchangelognsd/
+debian/dh-gitchangelog/
 
 doc/version
-man/dh_genchangelog.8
+man/dh_gitchangelog.conf.5
