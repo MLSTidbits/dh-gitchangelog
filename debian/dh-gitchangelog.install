@@ -1,0 +1,3 @@
+src/dh_gitchangelog usr/bin
+src/conf/dh_gitchangelog etc/default
+

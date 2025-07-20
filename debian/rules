@@ -20,20 +20,6 @@
 #	dh_auto_configure -- \
 #	-DCMAKE_LIBRARY_PATH=$(DEB_HOST_MULTIARCH)
 
-# what is being installed
-
-# Package variables
-app_name = dh-gitchangelog
-
-# Source files
-app = $(CURDIR)/src/dh_gitchangelog
-app_conf = $(CURDIR)/src/conf/dh_gitchangelog
-
-# Installation directories
-pkg_dir = $(CURDIR)/debian/$(app_name)
-conf_dir = $(pkg_dir)/etc/default
-app_bin = $(pkg_dir)/usr/bin
-
 %:
 	dh $@
 
@@ -51,15 +37,12 @@ install: build clean
 	dh_testdir
 	dh_testroot
 	dh_prep
-	dh_installdirs
-
-	install -m 755 $(app) $(app_bin)/
-	install -m 644 $(app_conf) $(conf_dir)/
 
 binary-indep: install
 	dh_installdocs
 	dh_bash-completion
 	dh_installchangelogs
+	dh_install
 	dh_installsystemd
 	dh_lintian
 	dh_installman
