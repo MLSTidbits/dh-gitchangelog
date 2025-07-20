@@ -27,7 +27,7 @@ app_name = dh-gitchangelog
 
 # Source files
 app = $(CURDIR)/src/dh_gitchangelog
-app_conf = $(CURDIR)/src/conf/dh_gitchangelog.conf
+app_conf = $(CURDIR)/src/conf/dh_gitchangelog
 
 # Installation directories
 pkg_dir = $(CURDIR)/debian/$(app_name)
