@@ -1,21 +1,12 @@
 # shellcheck disable=SC2148
-# Set the package name for the changelog [default: $(basename "$(pwd)")]
-#PACKAGE_NAME="dpkg-changelog"
+# How offend should the version number be incrementally updated to the
+# next the syntax version number should be set to the next one.
+
+# patch -> minor -> major [default: 15]
+#ITERATE_VERSION=10
 
 # The location of the changelog file [default: debian/changelog]
 #CHANGELOG_FILE="debian/changelog"
-
-# Set how the major version is determined based on the number of Git commits
-# that is devided by the number below. The
-#MAJOR_COUNT="12"
-
-# Set how the minor version is determined based on the number of Git commits
-# that is devided by the number below. The
-#MINOR_COUNT="6"
-
-# Set how the patch version is determined based on the number of Git commits
-# that is devided by the number below. The
-#PATCH_COUNT="(( MAJOR_COUNT + MINOR_COUNT ))"
 
 # Use the number of days of the year that the that that changelog message was
 # created for added patch versioning [default: true]
