@@ -8,10 +8,11 @@
 set -eo pipefail
 
 # shellcheck disable=SC1091
-test -f /etc/default/dh-gitchangelog && source /etc/default/dh-gitchangelog
+source /etc/default/dh_gitchangelog 2>/dev/null || {
+echo "Error: Configuration file /etc/default/dh_gitchangelog not found." ; exit 1 ;}
 
 _appName="dh-gitchangelog"
-_appVersion="$(cat /usr/share/doc/dh-gitchangelog 2>/dev/null ||
+_appVersion="$(cat /usr/share/doc/dh-gitchangelog/version 2>/dev/null ||
 echo "unknown")"
 
 _appInfo="$(cat <<EOF
