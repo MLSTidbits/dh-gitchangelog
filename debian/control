@@ -1,10 +1,10 @@
 Source: dh-gitchangelog
 Section: devel
 Priority: optional
-Maintainer: Michael Schaecher <michaelleeschaecher@gmail.com>
+Maintainer: MLS Tidbits <contact@mlstidbits.com>
 Rules-Requires-Root: no
 Build-Depends:
- debhelper-compat (= 13), git, dh-make
+ debhelper-compat (= 13), git, dh-make, dh-gitchangelog
 Standards-Version: 4.6.2
 Homepage: https://github/MichaelSchaecher/dh-gitchangelog
 Vcs-Browser: https://github.com/MichaelSchaecher/dh-gitchangelog
