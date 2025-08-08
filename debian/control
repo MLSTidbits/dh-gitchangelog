@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Michael Schaecher <michaelleeschaecher@gmail.com>
 Rules-Requires-Root: no
 Build-Depends:
- debhelper, dh-make, git
+ debhelper-compat (= 13), git, dh-make
 Standards-Version: 4.6.2
 Homepage: https://github/MichaelSchaecher/dh-gitchangelog
 Vcs-Browser: https://github.com/MichaelSchaecher/dh-gitchangelog
@@ -15,7 +15,7 @@ Architecture: any
 Multi-Arch: foreign
 Replaces: dpkg-changelog, genchangelog
 Depends:
- git, coreutils (>= 8), ${misc:Depends}, dh-make, debhelper
+ git, coreutils (>= 8), dh-make, debhelper
 Recommends: devscripts
 Description: Generate Debian changelogs from git commit messages
  dh-gitchangelog is a tool to generate Debian changelogs from git
