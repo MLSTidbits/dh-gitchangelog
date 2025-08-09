@@ -14,7 +14,7 @@ dpkg-changelog - process Debian changelogs
 
 # SYNOPSIS
 
-/etc/default/dpkg-changelog
+`$HOME/.config/dh_gitchangelog.conf`
 
 # DESCRIPTION
 
