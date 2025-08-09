@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# Copyright (C) 2025 by Michael Schaecher <mschaecher78@gmail.com>
+# Copyright (C) 2025 by MLS Tidbits <ops@mlstidbits.com>
+# Copyright (C) 2025 by Michael Schaecher <michaelschaecher@mlstidbits.com>
 
 # This script generates a Debian changelog file from git commit messages and is met to
 # be used in conjunction with git, dh-make, and debhelper.
@@ -8,8 +9,11 @@
 set -eo pipefail
 
 # shellcheck disable=SC1091
-source /etc/default/dh_gitchangelog 2>/dev/null || {
-echo "Error: Configuration file /etc/default/dh_gitchangelog not found." ; exit 1 ;}
+[ -f ${HOME}/.config/dh_gitchangelog.conf ] ||
+cp -a /usr/share/dh-gitchangelog/dh_gitchangelog.conf ${HOME}/.config/
+
+# shellcheck disable=SC1091
+source ${HOME}/.config/dh_gitchangelog.conf 2> /dev/null
 
 _appName="dh-gitchangelog"
 _appVersion="$(cat /usr/share/doc/dh-gitchangelog/version 2>/dev/null ||
