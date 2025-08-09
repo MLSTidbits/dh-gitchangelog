@@ -21,7 +21,9 @@ echo "unknown")"
 
 _appInfo="$(cat <<EOF
 ${_appName} (version: ${_appVersion}) - Debian package changelog generator
-Copyright (C) 2025 by Michael Schaecher <michaelleeschaecher@gmail.com>
+
+Copyright (C) 2025 by MLS Tidbits <ops@mlstidbits.com>
+Copyright (C) 2025 by Michael Schaecher <michaelschaecher@mlstidbits.com>
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
